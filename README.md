@@ -1,4 +1,3 @@
-
 Title: 5C-Pro Quick Start Guide  
 Author: Nicolas Servant  
 Date: 08-06-2016  
