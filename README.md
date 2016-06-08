@@ -1,13 +1,10 @@
-.. _QS:
+=========================
+5C-Pro Quick Start Guide
+=========================
 
-<!-- 
-Nicolas Servant
-5C_Pro
-0.0.1
-08-06-2016
--->
-Quick Start Guide
-*****************
+:Author: Nicolas Servant
+:Date: 08-06-2016
+:Version: 0.0.1
 
 <!-- This page is a quick start guide, please read the full `online manual <link>`_ for more information. -->
 
