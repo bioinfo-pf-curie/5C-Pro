@@ -9,9 +9,8 @@
 
 
 """
-Script to pair 2 SAM/BAM files into one PE BAM
-- On 03/05/16 Ferhat made changes starting from ~/bin/HiC-Pro_2.7.2b/scripts/mergeSAM.py 
-to make singletons possible to be reported
+5C analysis pipeline
+Write a matrix based file from a BAM file
 """
 
 import getopt
@@ -104,7 +103,7 @@ if __name__ == "__main__":
 
     ## Initialize variables
     if outputFile is None: 
-        outputFile = re.sub('\.bam$', '.validPairs', os.path.basename(inputFile))
+        outputFile = re.sub('\.bam$', '.matrix', os.path.basename(inputFile))
 
     reads_counter = 0
     multi_reads_counter = 0
@@ -149,12 +148,18 @@ if __name__ == "__main__":
             
             ##readname/chr/start/strand/chr/start/strand/length/fname/fname/mapq/mapq
             chrom = hr.getrname(rd.tid)
-            schrom=chrom.split("-")
+            schrom=chrom.split("|")
             info1=schrom[0].split("_")
             info2=schrom[1].split("_")
 
-            pname1=info1[0]+"-"+info1[1]+"-"+info1[2]
-            pname2=info2[0]+"-"+info2[1]+"-"+info2[2]
+            pname1=info1[0]
+            for i in range(1, len(info1)-4):
+                pname1=pname1+"_" + info1[i]
+            
+            pname2=info2[0]
+            for i in range(1, len(info2)-4):
+                pname2=pname2+"_" + info2[i]
+
             pname=pname1+"|"+pname2
 
             ## Build dict
@@ -163,20 +168,16 @@ if __name__ == "__main__":
             else:
                 count[pname] = 1
 
-            #handle_out.write(rd.qname+"\t"+info1[3]+"\t"+info1[4]+"\t+\t"+info2[3]+"\t"+info2[4]+"\t+\t"+str(0)+"\t"+pname1+"\t"+pname2+"\t"+str(rd.mapping_quality)+"\t"+str(rd.mapping_quality)+"\n")
-
     hr.close()
     
-
     ## Write maps file
     for key in count:
         ks=key.split("|")
         handle_out.write(ks[0] + "\t" + ks[1] + "\t" + str(count[key])+"\n")
     handle_out.close()
 
-
     ## stat
-    statfile = re.sub('\.bam$', '.pairstat', os.path.basename(inputFile))
+    statfile = re.sub('\.matrix$', '.stat', outputFile)
     handle_stat = open(statfile, 'w')
             
     handle_stat.write("Total_reads_processed\t" + str(reads_counter) + "\t" + str(round(float(reads_counter)/float(reads_counter)*100,3)) + "\n")

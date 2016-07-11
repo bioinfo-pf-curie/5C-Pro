@@ -8,11 +8,15 @@
 ## PATH
 BOWTIE2_PATH = /bioinfo/local/build/bowtie2-2.2.5
 SAMTOOLS_PATH = /bioinfo/local/build/samtools-1.1/bin/
+CUTADAPT_PATH = /bioinfo/local/build/cutadapt-1.8-2/bin/
+PYTHON_PATH= /bioinfo/local/build/python-2.7.9/bin/
+R_PATH = /bioinfo/local/build/R/R-3.2.0/bin/
 
 ## PIP_STEPS
 DO_TRIM = 1
 DO_MAPPING = 1
 DO_BUILD = 1
+DO_QC = 1
 
 ## TRIMMING
 MIN_LENGTH = 10
@@ -21,15 +25,12 @@ T7_ADAPTER = TAATACGACTCACTATAGCC
 
 ## MAPPING
 N_CPU = 8
-LOGFILE = hicpro.log
+ORG = mm9
 FORMAT = phred33
-PRIMERS_POOL = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/Xic3_MAIN_primer_pool_paired.fasta
-BOWTIE2_IDX_PATH = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/bwt2_indexes/Xic3_MAIN_primer_pool_paired
+BOWTIE2_IDX_PATH = ./annotations/bwt2/primer_pool_mm9_paired
 BOWTIE2_OPTIONS = --very-sensitive --end-to-end --reorder
 MIN_MAPQ = 0
 
-## BUILD CONTACT MAPS
-
-BIN_SIZE = 20000 40000 150000 500000 1000000
-MATRIX_FORMAT = upper
-
+## QC
+FORWARD_BED = ./annotations/primer_pool_mm9_FOR.bed
+REVERSE_BED = ./annotations/primer_pool_mm9_FOR.bed
