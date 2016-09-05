@@ -1,0 +1,124 @@
+---
+title: "5C-Pro - Quality Controls"
+author: "Institut Curie Bioinformatics platform"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+### Sample Description
+**Data import**
+
+```{r, echo=FALSE, message=FALSE, results='markup'}
+require(HiTC)
+require(RColorBrewer)
+
+cat(paste0("input=", input))
+cat(paste0("fbed=", fbed))
+cat(paste0("rbed=", rbed))
+cat(paste0("chr=", chr))
+cat(paste0("primers_blacklist=", blist))
+cat(paste0("output directory", odir))
+
+## load data                                                      
+d <- importC(input, ygi.bed=fbed, xgi.bed=rbed, allPairwise=TRUE)
+chrs <- paste0(chr,chr)
+
+```
+**Data summary**
+
+```{r, echo=FALSE, message=FALSE, results='markup'}
+
+detail(d)
+summary(d)
+
+``` 
+
+### Counts vs Distance
+
+```{r, echo=FALSE, fig.width=10, fig.height=12, message=FALSE}
+
+CQC(d, dev.new=FALSE)
+
+``` 
+
+### Outliers
+
+```{r, echo=FALSE, results='markup'}
+
+x<-d[[chrs]]
+
+if (file.exists(blist)){
+   bl<-read.table(blist)	
+   bl<-as.vector(as.matrix(bl))
+
+   cat(paste(as.vector(as.matrix(bl)), collapse=", "))
+   x<-removeIntervals(x, bl)
+}
+
+``` 
+
+### Contact Maps
+
+**Restriction fragments contact map**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
+
+mapC(HTClist(d[[chrs]]), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+
+``` 
+
+**Without outliers**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
+
+mapC(HTClist(x), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+
+``` 
+
+**Binned contact map**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
+
+xbin <- binningC(x, binsize=20e3, step=4, method="median", bin.adjust=FALSE)
+mapC(HTClist(xbin), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+
+``` 
+
+### Normalization
+
+**Normalisation per expected counts**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=TRUE}
+mapC(HTClist(getExpectedCounts(xbin, method="mean")), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+```
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
+xbin.oe <- normPerExpected(xbin, method="mean")
+ mapC(HTClist(xbin.oe), maxrange=3, log=TRUE)
+```
+
+
+**Iteractive correction (ICE)**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE, message=FALSE}
+xbin.ice <- normICE(xbin)
+mapC(HTClist(xbin.ice), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+
+```
+
+**Normalization by Local Genomic Features**
+
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE, message=FALSE}
+require(rtracklayer)
+map<- import("/data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/wgEncodeCrgMapabilityAlign100mer.bigWig", format="BigWig")
+cutSites <- getAnnotatedRestrictionSites(resSite="AAGCTT", overhangs5=1, chromosomes=chr, genomePack="BSgenome.Mmusculus.UCSC.mm9", wingc=200, mappability=map, winmap=500)
+xbin.annot<-setGenomicFeatures(xbin, cutSites)
+xbin.lgf <- normLGF(xbin.annot)
+mapC(HTClist(xbin.lgf), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+save(x, xbin, xbin.oe, xbin.ice, xbin.lgf, file=file.path(odir,"data/data.RData"))
+```

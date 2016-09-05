@@ -13,9 +13,9 @@ PYTHON_PATH= /bioinfo/local/build/python-2.7.9/bin/
 R_PATH = /bioinfo/local/build/R/R-3.2.0/bin/
 
 ## PIP_STEPS
-DO_TRIM = 1
-DO_MAPPING = 1
-DO_BUILD = 1
+DO_TRIM = 0
+DO_MAPPING = 0
+DO_BUILD = 0
 DO_QC = 1
 
 ## TRIMMING
@@ -27,10 +27,11 @@ T7_ADAPTER = TAATACGACTCACTATAGCC
 N_CPU = 8
 ORG = mm9
 FORMAT = phred33
-BOWTIE2_IDX_PATH = ./annotations/bwt2/primer_pool_mm9_paired
+BOWTIE2_IDX_PATH = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/bwt2_indexes/Xic3_MAIN_primer_pool_mm9_my5C_paired
 BOWTIE2_OPTIONS = --very-sensitive --end-to-end --reorder
 MIN_MAPQ = 0
 
 ## QC
-FORWARD_BED = ./annotations/primer_pool_mm9_FOR.bed
-REVERSE_BED = ./annotations/primer_pool_mm9_FOR.bed
+FORWARD_BED = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/Xic3_MAIN_primer_pool_mm9_my5C_FOR.bed
+REVERSE_BED = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/Xic3_MAIN_primer_pool_mm9_my5C_REV.bed
+PRIMERS_BLACKLIST = /data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/Xic3.2_5C-primer-pool_blacklist.tsv

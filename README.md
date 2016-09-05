@@ -43,3 +43,14 @@ Edit the 'config.txt' file and define the different parameters.
 ## Output files
 
 The outputs of each step are stored in a dedicated folder, i.e. trimming, mapping, qc, maps.
+
+## Run it in command line for all the samples
+
+for i in `seq 1 28`
+do 
+SAMPLE=$(awk -F"," -v i=${i} '$1==i{print $2}' /bioinfo/users/nservant/projects_analysis/NGS/5C_galupa/data_ln/samples.txt); 
+INPUT=$(awk -F"," -v i=${i} '$1==i{print $3}' /bioinfo/users/nservant/projects_analysis/NGS/5C_galupa/data_ln/samples.txt); 
+PROJPATH=/data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/
+echo $SAMPLE
+bash ${PROJPATH}/scripts/5C_pro.sh -i ${PROJPATH}/data_ln/${INPUT} -c ${PROJPATH}/scripts/config_centos.txt -o  ${PROJPATH}/results/${SAMPLE}
+done

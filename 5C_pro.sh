@@ -12,7 +12,7 @@ set -o errexit
 
 read_config()
 {
-    eval "$(sed -e '/^$/d' -e '/^#/d' -e 's/ =/=/' -e 's/= /=/' config.txt | awk -F"=" '{printf("%s=\"%s\"; export %s;\n", $1, $2, $1)}')"
+    eval "$(sed -e '/^$/d' -e '/^#/d' -e 's/ =/=/' -e 's/= /=/' $1 | awk -F"=" '{printf("%s=\"%s\"; export %s;\n", $1, $2, $1)}')"
 }
 
 ## Usage
@@ -127,9 +127,10 @@ if [[ $DO_QC == 1 ]]; then
     
     echo "Run QC ..."
     mkdir -p ${ODIR}/qc
+    mkdir -p ${ODIR}/data
 
-    cmd="${R_PATH}/R --no-save --no-restore CMD BATCH \"--args input='${ODIR}/maps/${prefix}_bwt2_rf.matrix' fbed='${FORWARD_BED}' rbed='${REVERSE_BED}' outdir='${ODIR}/qc'\" ./scripts/quality_control.R quality_control_${prefix}.Rout"
-    ##echo $cmd
+    cmd="${R_PATH}/R --no-save --no-restore -e \"input='${ODIR}/maps/${prefix}_bwt2_rf.matrix'; fbed='${FORWARD_BED}'; rbed='${REVERSE_BED}'; chr='chrX'; blist='${PRIMERS_BLACKLIST}'; odir='${ODIR}'; rmarkdown::render('./scripts/qualityControl.Rmd', output_file='${ODIR}/qc/${prefix}_qc.html')\"" 
+    echo $cmd
     eval $cmd
 
 fi
