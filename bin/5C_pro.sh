@@ -21,17 +21,19 @@ function usage {
     echo -e "-i"" <input>"
     echo -e "-c"" <config>"
     echo -e "-o"" <output directory/prefix>"
+    echo -e "-n"" <prefix of sample name>"
     echo -e "-h"" <help>"
     exit
 }
 
-mode=global
+
 while [ $# -gt 0 ]
 do
     case "$1" in
 	(-c) CONF=$2; shift;;
 	(-i) INPUT=$2; shift;;
 	(-o) ODIR=$2; shift;;
+	(-n) PREFIX=$2; shift;;
 	(-h) usage;;
 	(--) shift; break;;
 	(-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
@@ -40,16 +42,30 @@ do
     shift
 done
 
+## Init value
+if [[ -z $ODIR ]]; then
+    ODIR="./"
+fi
+
+if [[ -z $PREFIX ]]; then
+    PREFIX=$(basename $INPUT | sed -e 's/.fastq\(.gz\)*//')
+fi
+
+if [[ -z $CONF || -z $INPUT ]]; then
+    usage
+    exit -1
+fi
+
+
 ## Read configuration files
 read_config $CONF
-
-prefix=$(basename $INPUT | sed -e 's/.fastq\(.gz\)*//')
-cinput=${ODIR}/trimming/${prefix}_trim.fastq
 
 
 ###################################
 ## 2- Clean input data
 ###################################
+cinput=${ODIR}/trimming/${PREFIX}_trim.fastq
+
 if [[ $DO_TRIM == 1 ]]; then
 
     if [[ -z ${T3_ADAPTER} || -z ${T7_ADAPTER} ]]; then
@@ -64,7 +80,7 @@ if [[ $DO_TRIM == 1 ]]; then
     T3_ADAPTER_RC=$(echo ${T3_ADAPTER} | rev | tr ATGC TACG)
     T7_ADAPTER_RC=$(echo ${T7_ADAPTER} | rev | tr ATGC TACG)
     
-    cmd="${CUTADAPT_PATH}/cutadapt -g ${T3_ADAPTER} -a ${T7_ADAPTER_RC} -n 2 -m ${MIN_LENGTH} -o ${cinput} ${INPUT} &> ${ODIR}/trimming/cutadapt_${prefix}.log"
+    cmd="${CUTADAPT_PATH}/cutadapt -g ${T3_ADAPTER} -a ${T7_ADAPTER_RC} -n 2 -m ${MIN_LENGTH} -o ${cinput} ${INPUT} &> ${ODIR}/trimming/cutadapt_${PREFIX}.log"
     eval $cmd
 fi
 
@@ -100,7 +116,7 @@ if [[ $DO_MAPPING == 1 ]]; then
     echo "Align reads on primers indexes ..."
 
     ## Run bowtie
-    cmd="${BOWTIE2_PATH}/bowtie2 ${BOWTIE2_OPTIONS} --${FORMAT}-quals -p ${N_CPU} -x ${BOWTIE2_IDX_PATH} -U ${cinput} 2> ${ODIR}/mapping/bowtie_${prefix}_bowtie2.log | ${SAMTOOLS_PATH}/samtools view -bS - > ${ODIR}/mapping/${prefix}_bwt2.bam"
+    cmd="${BOWTIE2_PATH}/bowtie2 ${BOWTIE2_OPTIONS} --${FORMAT}-quals -p ${N_CPU} -x ${BOWTIE2_IDX_PATH} -U ${cinput} 2> ${ODIR}/mapping/bowtie_${PREFIX}_bowtie2.log | ${SAMTOOLS_PATH}/samtools view -bS - > ${ODIR}/mapping/${PREFIX}_bwt2.bam"
     eval $cmd
 fi
 
@@ -114,7 +130,7 @@ if [[ $DO_BUILD == 1 ]]; then
     echo "Build maps from BAM file ..."
     mkdir -p ${ODIR}/maps
 
-    cmd="${PYTHON_PATH}/python ./scripts/bam2maps.py -i ${ODIR}/mapping/${prefix}_bwt2.bam -o ${ODIR}/maps/${prefix}_bwt2_rf.matrix -q ${MIN_MAPQ} -v > ${ODIR}/maps/${prefix}_bwt2_bam2maps.log"
+    cmd="${PYTHON_PATH}/python ../scripts/bam2maps.py -i ${ODIR}/mapping/${PREFIX}_bwt2.bam -o ${ODIR}/maps/${PREFIX}_bwt2_rf.matrix -q ${MIN_MAPQ} -v > ${ODIR}/maps/${PREFIX}_bwt2_bam2maps.log"
     eval $cmd
 fi
 
@@ -129,7 +145,9 @@ if [[ $DO_QC == 1 ]]; then
     mkdir -p ${ODIR}/qc
     mkdir -p ${ODIR}/data
 
-    cmd="${R_PATH}/R --no-save --no-restore -e \"input='${ODIR}/maps/${prefix}_bwt2_rf.matrix'; fbed='${FORWARD_BED}'; rbed='${REVERSE_BED}'; chr='chrX'; blist='${PRIMERS_BLACKLIST}'; odir='${ODIR}'; rmarkdown::render('./scripts/qualityControl.Rmd', output_file='${ODIR}/qc/${prefix}_qc.html')\"" 
+    test=$$
+
+    cmd="${R_PATH}/R --no-save --no-restore -e \"input='${ODIR}/maps/${PREFIX}_bwt2_rf.matrix'; fbed='${FORWARD_BED}'; rbed='${REVERSE_BED}'; chr='chrX'; blist='${PRIMERS_BLACKLIST}'; odir='${ODIR}'; rmarkdown::render('../scripts/qualityControl.Rmd', intermediates_dir='${ODIR}', output_file='${ODIR}/qc/${PREFIX}_qc.html')\"" 
     echo $cmd
     eval $cmd
 

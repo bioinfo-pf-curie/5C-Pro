@@ -43,9 +43,14 @@ do
     shift
 done
 
-## Read configuration files                                                                                                                                                                                                                  
-read_config $CONF
+if [ $# -lt 1 ]
+then
+    usage
+    exit
+fi
 
+## Read configuration files
+read_config $CONF
 prefix=$(basename $INPUT_DESIGN | sed -e 's/.tsv$//')
 
 if [[ ! -e $INPUT_DESIGN ]]; then

@@ -1,6 +1,6 @@
-
 ##############
-##
+## 
+## 5C-Pro
 ## CONFIGURATION FILE
 ## 
 ##############
@@ -13,9 +13,9 @@ PYTHON_PATH= /bioinfo/local/build/python-2.7.9/bin/
 R_PATH = /bioinfo/local/build/R/R-3.2.0/bin/
 
 ## PIP_STEPS
-DO_TRIM = 0
-DO_MAPPING = 0
-DO_BUILD = 0
+DO_TRIM = 1
+DO_MAPPING = 1
+DO_BUILD = 1
 DO_QC = 1
 
 ## TRIMMING

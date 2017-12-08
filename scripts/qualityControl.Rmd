@@ -20,6 +20,7 @@ cat(paste0("primers_blacklist=", blist))
 cat(paste0("output directory", odir))
 
 ## load data                                                      
+prefix <- gsub(".matrix", "", basename(input))
 d <- importC(input, ygi.bed=fbed, xgi.bed=rbed, allPairwise=TRUE)
 chrs <- paste0(chr,chr)
 
@@ -79,7 +80,9 @@ mapC(HTClist(x), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
 
 ```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
 
-xbin <- binningC(x, binsize=20e3, step=4, method="median", bin.adjust=FALSE)
+xbin <- binningC(x, binsize=30e3, step=5, method="median", bin.adjust=FALSE)
+exportC(xbin, file=file.path(odir,"data",paste0(prefix,"_binned6kb_30_5")), use.names=TRUE)
+
 mapC(HTClist(xbin), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
 
 ``` 
@@ -93,7 +96,7 @@ mapC(HTClist(getExpectedCounts(xbin, method="mean")), trim.range=.95, col.pos=c(
 ```
 
 ```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE}
-xbin.oe <- normPerExpected(xbin, method="mean")
+xbin.oe <- normPerExpected(xbin, method="loess", stdev=TRUE)
  mapC(HTClist(xbin.oe), maxrange=3, log=TRUE)
 ```
 
@@ -106,19 +109,23 @@ mapC(HTClist(xbin.ice), trim.range=.95, col.pos=c("white", "orange", "red", "bla
 
 ```
 
-**Normalization by Local Genomic Features**
+<!--**Normalization by Local Genomic Features**-->
 
-```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, fig.width=6, fig.height=6, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 require(rtracklayer)
 map<- import("/data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/annotations/wgEncodeCrgMapabilityAlign100mer.bigWig", format="BigWig")
 cutSites <- getAnnotatedRestrictionSites(resSite="AAGCTT", overhangs5=1, chromosomes=chr, genomePack="BSgenome.Mmusculus.UCSC.mm9", wingc=200, mappability=map, winmap=500)
 xbin.annot<-setGenomicFeatures(xbin, cutSites)
 xbin.lgf <- normLGF(xbin.annot)
 mapC(HTClist(xbin.lgf), trim.range=.95, col.pos=c("white", "orange", "red", "black"))
+exportC(xbin.lgf, file=file.path(odir,"data",paste0(prefix,"_binned5kb_lgf")), use.names=TRUE)
 
 ```
 
 
 ```{r, echo=FALSE, message=FALSE}
-save(x, xbin, xbin.oe, xbin.ice, xbin.lgf, file=file.path(odir,"data/data.RData"))
+exportC(xbin.oe, file=file.path(odir,"data",paste0(prefix,"_binned6kb_oe")), use.names=TRUE)
+exportC(xbin.ice, file=file.path(odir,"data",paste0(prefix,"_binned6kb_ice")), use.names=TRUE)
+
+save(x, xbin, xbin.oe, xbin.ice, file=file.path(odir,"data",paste0(prefix,".RData")))
 ```

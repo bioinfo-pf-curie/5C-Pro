@@ -58,7 +58,7 @@
 # Contact: nicolas.servant@curie.fr
 #
 # HiC-Pro is free software; you can redistribute it and/or
-# modify it under the terms of the BSD-3 Licence.
+# modify it under the terms of the CECIL Licence.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -83,5 +83,5 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # If you use this software, please cite :
-# HiC-Pro: An optimized and flexible pipeline for Hi-C data processing. Servant N. et al. 2015
+#
 #
