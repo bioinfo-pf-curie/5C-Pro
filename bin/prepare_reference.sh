@@ -28,6 +28,12 @@ function usage {
     exit
 }
 
+if [ $# -lt 1 ]
+then
+    usage
+    exit
+fi
+
 mode=global
 while [ $# -gt 0 ]
 do
@@ -42,12 +48,6 @@ do
     esac
     shift
 done
-
-if [ $# -lt 1 ]
-then
-    usage
-    exit
-fi
 
 ## Read configuration files
 read_config $CONF

@@ -1,0 +1,37 @@
+##############
+## 
+## 5C-Pro
+## CONFIGURATION FILE
+## 
+##############
+
+## PATH
+BOWTIE2_PATH = /bioinfo/local/build/bowtie2-2.2.5
+SAMTOOLS_PATH = /bioinfo/local/build/samtools-1.1/bin/
+CUTADAPT_PATH = /bioinfo/local/build/cutadapt-1.8-2/bin/
+PYTHON_PATH= /bioinfo/local/build/python-2.7.9/bin/
+R_PATH = /bioinfo/local/build/R/R-3.2.0/bin/
+
+## PIP_STEPS
+DO_TRIM = 1
+DO_MAPPING = 1
+DO_BUILD = 1
+DO_QC = 0
+
+## TRIMMING
+MIN_LENGTH = 10
+T3_ADAPTER = ATTAACCCTCACTAAAGGGA
+T7_ADAPTER = TAATACGACTCACTATAGCC
+
+## MAPPING
+N_CPU = 8
+ORG = mm9
+FORMAT = phred33
+BOWTIE2_IDX_PATH = ./annotations/bwt2/Xic3_MAIN_primer_pool_mm9_my5C_paired
+BOWTIE2_OPTIONS = --very-sensitive --end-to-end --reorder
+MIN_MAPQ = 0
+
+## QC
+FORWARD_BED = ./annotations/Xic3_MAIN_primer_pool_mm9_my5C_FOR.bed
+REVERSE_BED = ./annotations/Xic3_MAIN_primer_pool_mm9_my5C_REV.bed
+PRIMERS_BLACKLIST = ./Galupa_et_al/Xic3.2_5C-primer-pool_blacklist.tsv

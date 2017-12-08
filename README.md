@@ -29,15 +29,22 @@ The following workflow is applied ;
 All the parameters and paths are defined in the configuration file.
 Edit the 'config.txt' file and define the different parameters.
 
+## Build annotations
+
+Prepare all annotations files from the primer design (based on my5C standard).
+
+Primers input files must contain the following information :
+PRIMER_NAME	REGION	TYPE	ASSEMBLY	CHROMOSOME	FRAGMENT_ID	PRIMER_ID	P_STARTPOS	P_ENDPOS	P_SPECIFIC	P_SPECIFIC_SIZE	P_FILLER	P_FILLER_SIZE	P_TM	P_GC	F_STARTPOS	F_ENDPOS	F_SIZE	P_MER	P_BLAST	BARCODE_NUM	BARCODE_SEQ	PRIMER_SEQUENCE
+
+./bin/prepare_reference.sh -i test_op/Galupa_et_al/Xic3_MAIN_primer_pool_mm9_my5C.tsv -c config.txt -o test-op/annotations
+
+The prepare_reference.sh script extract the primer sequences, and build the bowtie2 indexes for the mapping
+
 ## How to use it ?
-
-1. Prepare all annotations files from the primer design
-
-./prepare_reference.sh -i test_data/primer_pool_mm9.tsv -c config.txt -o annotations
 
 2. Run the pipeline to generate the 5C maps
 
-./5C_pro.sh -i test_data/input.fastq.gz -c config.txt -o res
+./bin/5C_pro.sh -i ./test-op/Galupa_et_al/input.fastq.gz -c ./test-op/config.txt -o ./test-op/res
 
 
 ## Output files
