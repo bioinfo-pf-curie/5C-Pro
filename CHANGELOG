@@ -1,9 +1,19 @@
+
+CHANGES IN VERSION 0.0.2
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+   o Add -v option for version control
+
+   o Primers design file has changed to be much more flexible
+
+
 ***********************************
 CHANGES IN VERSION 0.0.1
 
 NEW FEATURES
 
    o First versiono of the 5C pipeline. The workflow is currently designed for SE reads
- 
+
 
 

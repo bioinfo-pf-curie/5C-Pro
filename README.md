@@ -31,12 +31,12 @@ Edit the 'config.txt' file and define the different parameters.
 
 ## Build annotations
 
-Prepare all annotations files from the primer design (based on my5C standard).
+Prepare all annotations files from the primer design.
 
 Primers input files must contain the following information :
-PRIMER_NAME	REGION	TYPE	ASSEMBLY	CHROMOSOME	FRAGMENT_ID	PRIMER_ID	P_STARTPOS	P_ENDPOS	P_SPECIFIC	P_SPECIFIC_SIZE	P_FILLER	P_FILLER_SIZE	P_TM	P_GC	F_STARTPOS	F_ENDPOS	F_SIZE	P_MER	P_BLAST	BARCODE_NUM	BARCODE_SEQ	PRIMER_SEQUENCE
+PRIMER_NAME CHROMOSOME P_STARTPOS P_ENDPOS TYPE P_SPECIFICPRIMER_SEQUENCE
 
-./bin/prepare_reference.sh -i test_op/Galupa_et_al/Xic3_MAIN_primer_pool_mm9_my5C.tsv -c config.txt -o test-op/annotations
+./bin/prepare_reference.sh -i test_op/Galupa_et_al/Xic3_MAIN_primer_pool_mm9.tsv -c config.txt -o test-op/annotations
 
 The prepare_reference.sh script extract the primer sequences, and build the bowtie2 indexes for the mapping
 
@@ -51,13 +51,4 @@ The prepare_reference.sh script extract the primer sequences, and build the bowt
 
 The outputs of each step are stored in a dedicated folder, i.e. trimming, mapping, qc, maps.
 
-## Run it in command line for all the samples
 
-for i in `seq 1 28`
-do 
-SAMPLE=$(awk -F"," -v i=${i} '$1==i{print $2}' /bioinfo/users/nservant/projects_analysis/NGS/5C_galupa/data_ln/samples.txt); 
-INPUT=$(awk -F"," -v i=${i} '$1==i{print $3}' /bioinfo/users/nservant/projects_analysis/NGS/5C_galupa/data_ln/samples.txt); 
-PROJPATH=/data/kdi_prod/.kdi/project_workspace_0/1066/acl/01.00/
-echo $SAMPLE
-bash ${PROJPATH}/scripts/5C_pro.sh -i ${PROJPATH}/data_ln/${INPUT} -c ${PROJPATH}/scripts/config_centos.txt -o  ${PROJPATH}/results/${SAMPLE}
-done

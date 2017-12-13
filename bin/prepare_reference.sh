@@ -62,8 +62,8 @@ mkdir -p ${ODIR}
 echo "extract FOR/REV ..."
 
 ## Extract FOR and REV primers sequences into fasta file
-awk -v org=${ORG} 'NR>1{print ">"$1"_"org"_"$5"_"$15"_"$16} $3=="FOR"{print $21$10} $3=="REV"{print $10$21}' ${INPUT_DESIGN} | grep -A1 "FOR" | grep -v "\-\-" >  ${ODIR}/${prefix}_FOR.fasta 
-awk -v org=${ORG} 'NR>1{print ">"$1"_"org"_"$5"_"$15"_"$16} $3=="FOR"{print $21$10} $3=="REV"{print $10$21}' ${INPUT_DESIGN} | grep -A1 "REV" | grep -v "\-\-" >  ${ODIR}/${prefix}_REV.fasta 
+awk -v org=${ORG} 'NR>1{print ">"$1"_"org"_"$2"_"$3"_"$4} {print $6}' ${INPUT_DESIGN} | grep -A1 "FOR" | grep -v "\-\-" >  ${ODIR}/${prefix}_FOR.fasta 
+awk -v org=${ORG} 'NR>1{print ">"$1"_"org"_"$2"_"$3"_"$4} {print $6}' ${INPUT_DESIGN} | grep -A1 "REV" | grep -v "\-\-" >  ${ODIR}/${prefix}_REV.fasta 
 
 echo "make BED ..."
 

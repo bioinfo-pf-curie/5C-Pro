@@ -9,6 +9,8 @@
 
 set -o pipefail
 set -o errexit 
+SOFT="5C-Pro"
+VERSION="0.0.2"
 
 read_config()
 {
@@ -23,9 +25,20 @@ function usage {
     echo -e "-o"" <output directory/prefix>"
     echo -e "-n"" <prefix of sample name>"
     echo -e "-h"" <help>"
+    echo -e "-v"" <version>"
     exit
 }
 
+function version {
+    echo -e "$SOFT version $VERSION"
+    exit
+}
+
+if [ $# -lt 1 ]
+then
+    usage
+    exit
+fi
 
 while [ $# -gt 0 ]
 do
@@ -35,6 +48,7 @@ do
 	(-o) ODIR=$2; shift;;
 	(-n) PREFIX=$2; shift;;
 	(-h) usage;;
+	(-v) version;;
 	(--) shift; break;;
 	(-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
 	(*)  break;;
